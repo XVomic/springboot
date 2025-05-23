@@ -14,17 +14,19 @@
     <property name="ROOT_LOG_LEVEL" value="DEBUG"/>
     <property name="FILE_LOG_LEVEL" value="DEBUG"/>
     <property name="CONSOLE_LOG_LEVEL" value="DEBUG"/>
-    <property name="FILE_NAME" value="passenger"/>
+    <property name="FILE_NAME" value="springbootlearn"/>
     <!-- 定义日志文件大小和周期 -->
     <property name="log.maxSize" value="100MB"/>
     <property name="log.maxHistory" value="30"/>
     <!-- 日志格式配置，下面提供了两种方案 -->
-    <property name="CONSOLE_LOG_PATTERN"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) --- %magenta([%X{traceId}]) [%thread] %green(%class{50}):%cyan(%method) : %msg%n">
-    </property>
+<!--    <property name="CONSOLE_LOG_PATTERN"-->
+<!--              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) -&#45;&#45; %magenta([%X{traceId}]) [%thread] %green(%class{50}):%cyan(%method) : %msg%n">-->
+<!--    </property>-->
     <property name="FILE_LOG_PATTERN"
               value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level --- [%X{traceId}] [%thread] %class{50}:%method : %msg%n">
     </property>
+
+    <property name="CONSOLE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger{50} - %msg%n"/>
 
     <!-- appender：定义了日志输出目的地
         1. ch.qos.logback.core.ConsoleAppender定义的目的地为控制台，不存储进日志文件
@@ -65,7 +67,11 @@
     <!-- 可以为不同包或类定义日志各自的日志输出级别 -->
     <logger name="org.springframework.web" level="DEBUG"/>
 
-    <logger name="com.agiview.flightupgrade.service.passengerservice" level="DEBUG"/>
+    <logger name="com.xxc.learnboot" level="DEBUG"/>
+<!--    关闭特定包的日志输出,注意要写包的全名-->
+    <logger name="com.zaxxer.hikari" level="OFF"/>
+    <logger name="org.hibernate.event" level="OFF"/>
+    <logger name="org.springframework.orm.jpa" level="OFF"/>
 
     <!--root是默认的logger，默认级别是debug-->
     <root level="${ROOT_LOG_LEVEL}">
