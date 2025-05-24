@@ -1,11 +1,13 @@
 package com.xxc.learnboot.controller;
 
+import com.xxc.learnboot.common.Result;
 import com.xxc.learnboot.config.JwtConfig;
 import com.xxc.learnboot.entity.User;
 import com.xxc.learnboot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,29 +36,37 @@ public class AuthController {
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User loginUser) {
-        Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(loginUser.getUsername(), loginUser.getPassword())
-        );
+    public Result<?> login(@RequestBody User loginUser) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginUser.getUsername(), loginUser.getPassword())
+            );
 
-        String jwt = jwtConfig.generateToken(loginUser.getUsername());
-        
-        Map<String, String> response = new HashMap<>();
-        response.put("token", jwt);
-        return ResponseEntity.ok(response);
+            String jwt = jwtConfig.generateToken(loginUser.getUsername());
+
+            Map<String, String> tokenMap = new HashMap<>();
+            tokenMap.put("token", jwt);
+            return Result.success(tokenMap);
+        } catch (BadCredentialsException e) {
+            return Result.error("用户名或密码错误");
+        } catch (Exception e) {
+            return Result.error("登录失败: " + e.getMessage());
+        }
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User newUser) {
-        if (userService.findByUsername(newUser.getUsername()) != null) {
-            return ResponseEntity.badRequest().body("Username already exists");
-        }
+    public Result<?> register(@RequestBody User newUser) {
+        try {
+            if (userService.findByUsername(newUser.getUsername()) != null) {
+                return Result.error("用户名已存在");
+            }
 
-        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
-        User savedUser = userService.insert(newUser);
-        
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "User registered successfully");
-        return ResponseEntity.ok(response);
+            newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+            User savedUser = userService.insert(newUser);
+
+            return Result.success("注册成功");
+        } catch (Exception e) {
+            return Result.error("注册失败: " + e.getMessage());
+        }
     }
 }
