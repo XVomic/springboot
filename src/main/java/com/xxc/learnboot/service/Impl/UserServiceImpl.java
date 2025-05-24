@@ -4,6 +4,8 @@ import com.xxc.learnboot.dao.UserRepository;
 import com.xxc.learnboot.entity.User;
 import com.xxc.learnboot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -27,5 +29,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findById(int id) {
         return userRepository.findById(id);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found with username: " + username);
+        }
+        return user;
     }
 }
