@@ -1,15 +1,16 @@
 package com.xxc.learnboot.service;
 
 import com.xxc.learnboot.entity.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.Optional;
 
-public interface UserService {
+public interface UserService extends UserDetailsService {
 
-    public User insert(User user);
+    User insert(User user);
 
-    public User findByUsername(String username);
+    User findByUsername(String username);
 
-    public Optional<User> findById(int id);
+    Optional<User> findById(int id);
 
 }
