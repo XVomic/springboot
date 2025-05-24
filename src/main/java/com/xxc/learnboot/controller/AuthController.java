@@ -9,10 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,22 +38,33 @@ public class AuthController {
 
         String jwt = jwtConfig.generateToken(loginUser.getUsername());
         
-        Map<String, String> response = new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
         response.put("token", jwt);
+        response.put("username", loginUser.getUsername());
+        User user = userService.findByUsername(loginUser.getUsername());
+        response.put("role", user.getRole());
+        
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User newUser) {
+    public ResponseEntity<?> register(@RequestBody User newUser, @RequestParam(required = false) boolean isAdmin) {
         if (userService.findByUsername(newUser.getUsername()) != null) {
-            return ResponseEntity.badRequest().body("Username already exists");
+            return ResponseEntity.badRequest().body("用户名已存在");
         }
 
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        if (isAdmin) {
+            newUser.setRole("ROLE_ADMIN");
+        } else {
+            newUser.setRole("ROLE_USER");
+        }
+        
         User savedUser = userService.insert(newUser);
         
         Map<String, String> response = new HashMap<>();
-        response.put("message", "User registered successfully");
+        response.put("message", "用户注册成功");
+        response.put("role", savedUser.getRole());
         return ResponseEntity.ok(response);
     }
 }
