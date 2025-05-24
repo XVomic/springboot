@@ -11,7 +11,7 @@
         3. value=“../logs” – 表示保存到程序运行目录的父目录
     -->
     <property name="LOG_HOME" value="logs"/>
-    <property name="ROOT_LOG_LEVEL" value="DEBUG"/>
+    <property name="ROOT_LOG_LEVEL" value="INFO"/>
     <property name="FILE_LOG_LEVEL" value="DEBUG"/>
     <property name="CONSOLE_LOG_LEVEL" value="DEBUG"/>
     <property name="FILE_NAME" value="springbootlearn"/>
@@ -37,6 +37,7 @@
         <!--这里定义了DEBUG，也就是控制台不会输出比DEBUG级别小的日志-->
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>${CONSOLE_LOG_LEVEL}</level>
+<!--            <level>INFO</level>-->
         </filter>
         <!--定义控制台输出格式-->
         <encoder>
